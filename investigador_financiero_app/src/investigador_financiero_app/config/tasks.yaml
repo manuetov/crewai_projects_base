@@ -1,0 +1,32 @@
+research_task:
+  description: >
+    Realiza una investigación exhaustiva sobre la empresa {company}. Focaliza en:
+    1. Estado actual de la empresa y su salud
+    2. Rendimiento histórico de la empresa
+    3. Retos y oportunidades principales
+    4. Noticias y eventos recientes
+    5. Perspectiva futura y desarrollos potenciales
+
+    Asegúrate de organizar tus hallazgos en un formato estructurado con secciones claras.
+  expected_output: >
+    Un documento de investigación completo con secciones bien organizadas que cubran
+    todos los aspectos solicitados de {company}. Incluye datos específicos, cifras y
+    ejemplos donde sea relevante.
+  agent: researcher
+
+analysis_task:
+  description: >
+    Organiza los hallazgos de la investigación y crea un informe completo sobre {company}.
+    Tu informe debe:
+    1. Comenzar con un resumen ejecutivo
+    2. Incluir toda la información clave de la investigación
+    3. Proporcionar análisis perspicaces de tendencias y patrones
+    4. Ofrecer una perspectiva del mercado para la empresa, señalando que esto no debe usarse para decisiones de trading
+    5. Estar formateado en un estilo profesional, fácil de leer con encabezados claros
+  expected_output: >
+    Un informe bien pulido, profesional sobre {company} que presenta los hallazgos de la investigación con análisis y
+     perspectivas adicionales. El informe debe estar bien estructurado con un resumen ejecutivo, secciones principales y conclusión.
+  agent: analyst
+  context:
+    - research_task
+  output_file: output/report.md

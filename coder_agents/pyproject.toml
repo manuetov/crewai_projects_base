@@ -1,0 +1,26 @@
+[project]
+name = "coder_agents"
+version = "0.1.0"
+description = "coder_agents using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[anthropic,tools]==1.9.3",
+    "fastapi>=0.129.0",
+    "litellm>=1.75.3",
+]
+
+[project.scripts]
+coder_agents = "coder_agents.main:run"
+run_crew = "coder_agents.main:run"
+train = "coder_agents.main:train"
+replay = "coder_agents.main:replay"
+test = "coder_agents.main:test"
+run_with_trigger = "coder_agents.main:run_with_trigger"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
