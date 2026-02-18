@@ -9,10 +9,11 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 os.makedirs("generated-apps", exist_ok=True)
 
 # ---------------------------------------------------------------------------
-# Prompt del usuario — en Prioridad 3 esto llegará desde la UI Gradio
+# Prompt de ejemplo — usado solo cuando se llama directamente con `crewai run`
+# En Prioridad 3 el prompt llega desde la UI Gradio vía run(prompt)
 # ---------------------------------------------------------------------------
 
-USER_PROMPT = """
+_DEFAULT_PROMPT = """
 Un sistema sencillo de gestión de cuentas para una plataforma de simulación de trading.
 El sistema debe permitir a los usuarios crear una cuenta, depositar fondos y retirar fondos.
 El sistema debe permitir a los usuarios registrar que han comprado o vendido acciones, proporcionando una cantidad.
@@ -28,16 +29,22 @@ Requiere interfaz de usuario Gradio y pruebas unitarias.
 """
 
 
-def run():
+def run(requirements: str | None = None):
     """
     Flujo principal:
       1. El Agente Arquitecto analiza el prompt y produce una CrewStrategy.
       2. El equipo de ingeniería se construye filtrando solo los agentes necesarios.
       3. El equipo ejecuta las tareas en orden secuencial.
+
+    Args:
+        requirements: Descripción de la app a construir. Si es None, usa el
+                      prompt de ejemplo definido en _DEFAULT_PROMPT.
     """
+    prompt = (requirements or _DEFAULT_PROMPT).strip()
+
     # ── Fase 1: Arquitecto ──────────────────────────────────────────────────
     print("[Arquitecto] Analizando requisitos...")
-    strategy = ArchitectCrew().run(USER_PROMPT)
+    strategy = ArchitectCrew().run(prompt)
 
     print(f"[Arquitecto] Módulo   : {strategy.module_name}")
     print(f"[Arquitecto] Clase    : {strategy.class_name}")
@@ -46,7 +53,7 @@ def run():
 
     # ── Fase 2: Equipo de ingeniería ────────────────────────────────────────
     inputs = {
-        "requirements": USER_PROMPT,
+        "requirements": prompt,
         "module_name": strategy.module_name,
         "class_name": strategy.class_name,
     }
