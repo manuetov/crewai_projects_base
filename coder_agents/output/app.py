@@ -70,7 +70,7 @@ def get_current_holdings():
     result = "Acciones actuales:\n"
     for symbol, quantity in holdings.items():
         try:
-            price = from accounts import get_share_price
+            from accounts import get_share_price
             current_price = get_share_price(symbol)
             value = quantity * current_price
             result += f"{symbol}: {quantity} acciones - ${current_price:.2f} por acción - Valor total: ${value:.2f}\n"
