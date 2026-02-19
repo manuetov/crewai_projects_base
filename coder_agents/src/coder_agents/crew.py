@@ -79,10 +79,10 @@ class ArchitectCrew:
 
 @CrewBase
 class EngineeringTeam():
-    """Tripulación de Ingenieros"""
+    """Tripulación de Ingenieros. Usa configs sin architect/strategy_task para evitar KeyError."""
 
-    agents_config = 'config/agents.yaml'
-    tasks_config = 'config/tasks.yaml'
+    agents_config = 'config/agents_engineering.yaml'
+    tasks_config = 'config/tasks_engineering.yaml'
 
     def set_strategy(self, strategy: CrewStrategy) -> "EngineeringTeam":
         """Almacena la estrategia del Arquitecto para filtrar agentes y tareas."""
