@@ -123,9 +123,6 @@ class EngineeringTeam():
         return Agent(
             config=self.agents_config['test_engineer'],
             verbose=True,
-            allow_code_execution=True,
-            code_execution_mode="unsafe",
-            max_execution_time=600,
             max_retry_limit=5,
             tools=[McpFilesystemTool()],
         )
