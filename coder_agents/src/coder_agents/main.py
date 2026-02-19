@@ -2,15 +2,15 @@
 import warnings
 import os
 
-from coder_agents.crew import ArchitectCrew, EngineeringTeam
+from coder_agents.flow import AppBuilderFlow
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 os.makedirs("generated-apps", exist_ok=True)
 
 # ---------------------------------------------------------------------------
-# Prompt de ejemplo — usado solo cuando se llama directamente con `crewai run`
-# En Prioridad 3 el prompt llega desde la UI Gradio vía run(prompt)
+# Prompt de ejemplo — usado solo cuando se llama con `crewai run`
+# En Prioridad 3+ el prompt llega desde la UI Gradio vía run(prompt)
 # ---------------------------------------------------------------------------
 
 _DEFAULT_PROMPT = """
@@ -31,41 +31,18 @@ Requiere interfaz de usuario Gradio y pruebas unitarias.
 
 def run(requirements: str | None = None):
     """
-    Flujo principal:
-      1. El Agente Arquitecto analiza el prompt y produce una CrewStrategy.
-      2. El equipo de ingeniería se construye filtrando solo los agentes necesarios.
-      3. El equipo ejecuta las tareas en orden secuencial.
+    Flujo principal (con HITL por terminal):
+      1. AppBuilderFlow.run_architect  — Agente Arquitecto → CrewStrategy
+      2. AppBuilderFlow.request_approval — HITL: aprobación por terminal
+      3. AppBuilderFlow.run_engineering_team — construye la app si fue aprobado
 
     Args:
-        requirements: Descripción de la app a construir. Si es None, usa el
-                      prompt de ejemplo definido en _DEFAULT_PROMPT.
+        requirements: Descripción de la app. Si es None usa _DEFAULT_PROMPT.
     """
     prompt = (requirements or _DEFAULT_PROMPT).strip()
-
-    # ── Fase 1: Arquitecto ──────────────────────────────────────────────────
-    print("[Arquitecto] Analizando requisitos...")
-    strategy = ArchitectCrew().run(prompt)
-
-    print(f"[Arquitecto] Módulo   : {strategy.module_name}")
-    print(f"[Arquitecto] Clase    : {strategy.class_name}")
-    print(f"[Arquitecto] Agentes  : {[r.value for r in strategy.agents_needed]}")
-    print(f"[Arquitecto] Motivo   : {strategy.rationale}")
-
-    # ── Fase 2: Equipo de ingeniería ────────────────────────────────────────
-    inputs = {
-        "requirements": prompt,
-        "module_name": strategy.module_name,
-        "class_name": strategy.class_name,
-    }
-
-    print("\n[Equipo] Iniciando construcción...")
-    result = (
-        EngineeringTeam()
-        .set_strategy(strategy)
-        .crew()
-        .kickoff(inputs=inputs)
-    )
-    return result
+    flow = AppBuilderFlow()
+    flow.state.requirements = prompt
+    return flow.kickoff()
 
 
 if __name__ == "__main__":
