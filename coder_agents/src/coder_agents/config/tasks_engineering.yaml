@@ -49,3 +49,28 @@ test_task:
   context:
     - code_task
   output_file: generated-apps/test_{module_name}
+
+docs_task:
+  description: >
+    Eres el Ingeniero de Documentación del proyecto {module_name}.
+    Ya existe el módulo backend, puede existir también un frontend (app.py) y tests (test_{module_name}).
+    Tu tarea es generar un archivo INSTRUCTIONS.md que sirva como guía completa del proyecto.
+
+    El archivo debe contener las siguentes secciones (en este orden):
+    1. **Propósito** — qué hace el proyecto y cuál es su clase principal ({class_name}).
+    2. **Stack tecnológico** — Python, librerías, Gradio si existe frontend.
+    3. **Estructura de archivos** — lista los archivos en generated-apps/ y describe el rol de cada uno.
+    4. **Instalación** — cómo instalar dependencias (`pip install -r requirements.txt` o similar).
+    5. **Ejecución** — cómo ejecutar el módulo y el frontend si existe.
+    6. **Tests** — cómo correr los tests (`python -m pytest test_{module_name}` o similar).
+    7. **Convenciones** — nomenclatura, estilo de código.
+    8. **Notas para IA** — qué archivos son entry points, cuáles no deben modificarse, cómo extender.
+
+    Aquí están los requisitos originales del proyecto para contexto: {requirements}
+  expected_output: >
+    Un archivo INSTRUCTIONS.md completo en formato Markdown, con las 8 secciones descritas.
+    Debe estar listo para ser leído por un desarrollador o un agente de IA que abra el proyecto.
+  agent: docs_engineer
+  context:
+    - code_task
+  output_file: generated-apps/INSTRUCTIONS.md

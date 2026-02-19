@@ -17,6 +17,7 @@ _AGENT_METHOD_MAP: dict[AgentRole, str] = {
     AgentRole.BACKEND_ENGINEER: "backend_engineer",
     AgentRole.FRONTEND_ENGINEER: "frontend_engineer",
     AgentRole.TEST_ENGINEER: "test_engineer",
+    AgentRole.DOCS_ENGINEER: "docs_engineer",
 }
 
 _TASK_METHOD_MAP: dict[AgentRole, str] = {
@@ -24,6 +25,7 @@ _TASK_METHOD_MAP: dict[AgentRole, str] = {
     AgentRole.BACKEND_ENGINEER: "code_task",
     AgentRole.FRONTEND_ENGINEER: "frontend_task",
     AgentRole.TEST_ENGINEER: "test_task",
+    AgentRole.DOCS_ENGINEER: "docs_task",
 }
 
 
@@ -128,6 +130,14 @@ class EngineeringTeam():
             tools=[McpFilesystemTool()],
         )
 
+    @agent
+    def docs_engineer(self) -> Agent:
+        return Agent(
+            config=self.agents_config['docs_engineer'],
+            verbose=True,
+            tools=[McpFilesystemTool()],
+        )
+
     @task
     def design_task(self) -> Task:
         return Task(config=self.tasks_config['design_task'])
@@ -144,22 +154,34 @@ class EngineeringTeam():
     def test_task(self) -> Task:
         return Task(config=self.tasks_config['test_task'])
 
+    @task
+    def docs_task(self) -> Task:
+        return Task(config=self.tasks_config['docs_task'])
+
     @crew
     def crew(self) -> Crew:
         """Crea la tripulación filtrando agentes y tareas según la estrategia del Arquitecto."""
         strategy: Optional[CrewStrategy] = getattr(self, "_strategy", None)
 
         if strategy:
+            # docs_engineer siempre va al final — separamos para garantizar el orden
+            non_docs = [r for r in strategy.agents_needed if r != AgentRole.DOCS_ENGINEER]
+            has_docs = AgentRole.DOCS_ENGINEER in strategy.agents_needed
+
             agents = [
                 getattr(self, _AGENT_METHOD_MAP[role])()
-                for role in strategy.agents_needed
+                for role in non_docs
                 if role in _AGENT_METHOD_MAP
             ]
             tasks = [
                 getattr(self, _TASK_METHOD_MAP[role])()
-                for role in strategy.agents_needed
+                for role in non_docs
                 if role in _TASK_METHOD_MAP
             ]
+
+            if has_docs:
+                agents.append(self.docs_engineer())
+                tasks.append(self.docs_task())
         else:
             agents = self.agents
             tasks = self.tasks

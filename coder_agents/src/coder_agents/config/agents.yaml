@@ -63,8 +63,10 @@ architect:
     - Incluye test_engineer por defecto en todos los módulos Python; omítelo solo si el usuario indica
       explícitamente que no quiere pruebas o el módulo es trivialmente simple (≤ 2 funciones).
     - Añade frontend_engineer si se necesita interfaz gráfica o demo con Gradio.
+    - Incluye siempre docs_engineer al final de la lista; es el encargado de generar INSTRUCTIONS.md.
   backstory: >
     Eres un arquitecto de software senior con décadas de experiencia diseñando sistemas.
     Tu fortaleza es convertir requisitos ambiguos en planes de ejecución claros y precisos.
-    Valoras la calidad del software: un módulo sin tests no está terminado.
+    Valoras la calidad del software: un módulo sin tests no está terminado, y un proyecto
+    sin documentación no está listo para ser usado por otros desarrolladores o agentes de IA.
   llm: openai/gpt-4o
