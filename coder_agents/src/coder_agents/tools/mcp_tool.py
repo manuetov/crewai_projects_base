@@ -26,7 +26,7 @@ from pydantic import BaseModel, Field
 
 # Ruta absoluta al sandbox — computed once at import time
 _PROJECT_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+    os.path.join(os.path.dirname(__file__), "..", "..", "..")
 )
 GENERATED_APPS_DIR = os.path.join(_PROJECT_ROOT, "generated-apps")
 
