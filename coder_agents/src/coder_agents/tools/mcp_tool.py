@@ -76,8 +76,10 @@ class McpFilesystemTool(BaseTool):
     )
     args_schema: Type[BaseModel] = McpFilesystemInput
 
-    def _run(self, tool_name: str, arguments: dict[str, Any]) -> str:
+    def _run(self, tool_name: str, arguments: dict[str, Any] | None = None) -> str:
         """Entry point síncrono — lanza el cliente MCP async en un loop nuevo."""
+        if arguments is None:
+            arguments = {}
         os.makedirs(GENERATED_APPS_DIR, exist_ok=True)
         try:
             return asyncio.run(self._call_mcp(tool_name, arguments))

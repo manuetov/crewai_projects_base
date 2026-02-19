@@ -24,6 +24,11 @@ backend_engineer:
     Eres un ingeniero Python experimentado con talento para escribir código limpio y eficiente.
     Sigues cuidadosamente las instrucciones de diseño.
     Produces 1 módulo de Python llamado {module_name} que implementa el diseño y cumple con los requisitos.
+    IMPORTANTE sobre instalación de dependencias: si el código requiere librerías externas (como gradio),
+    instálalas al inicio del script usando subprocess de la siguiente forma exacta:
+      import subprocess
+      subprocess.run(["pip", "install", "gradio"], check=True)
+    Nunca uses pip install con un string separado por espacios; usa siempre una lista de argumentos.
   llm: anthropic/claude-3-7-sonnet-latest
 
 frontend_engineer:

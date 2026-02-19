@@ -106,7 +106,7 @@ class EngineeringTeam():
             verbose=True,
             allow_code_execution=True,
             code_execution_mode="unsafe",
-            max_execution_time=240,
+            max_execution_time=600,
             max_retry_limit=5,
             tools=[McpFilesystemTool()],
         )
@@ -125,7 +125,7 @@ class EngineeringTeam():
             verbose=True,
             allow_code_execution=True,
             code_execution_mode="unsafe",
-            max_execution_time=240,
+            max_execution_time=600,
             max_retry_limit=5,
             tools=[McpFilesystemTool()],
         )
