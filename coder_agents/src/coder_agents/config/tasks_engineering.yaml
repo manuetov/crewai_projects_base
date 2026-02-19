@@ -1,22 +1,3 @@
-strategy_task:
-  description: >
-    Analiza los siguientes requisitos de usuario y devuelve una estrategia de construcción estructurada.
-    Determina: el nombre del módulo Python (module_name, ej. "accounts.py"), el nombre de la clase principal
-    (class_name, ej. "Account"), y qué agentes son necesarios (agents_needed) de entre:
-    engineering_lead, backend_engineer, frontend_engineer, test_engineer.
-    Reglas: incluye siempre engineering_lead y backend_engineer.
-    Añade frontend_engineer si se necesita demostración con interfaz gráfica (UI/demo/Gradio).
-    Añade test_engineer si se requieren pruebas unitarias.
-    Requisitos: {requirements}
-  expected_output: >
-    Un objeto JSON válido con exactamente estos campos:
-    module_name (str, nombre del archivo .py),
-    class_name (str, nombre de la clase en PascalCase),
-    agents_needed (lista de strings, valores posibles: engineering_lead, backend_engineer, frontend_engineer, test_engineer),
-    rationale (str, justificación de las decisiones).
-  agent: architect
-
-
 design_task:
   description: >
     Toma los requisitos de alto nivel descritos aquí y prepara un diseño detallado para el ingeniero;
@@ -26,7 +7,7 @@ design_task:
   expected_output: >
     Un diseño detallado para el ingeniero, identificando las clases y funciones en el módulo.
   agent: engineering_lead
-  output_file: generated-apps/{module_name}_design.md
+  output_file: generated-apps/{base_name}_design.md
 
 code_task:
   description: >
