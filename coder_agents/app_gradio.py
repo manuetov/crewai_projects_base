@@ -119,6 +119,7 @@ def approve_and_build(prompt: str, _state: dict):
         inputs = {
             "requirements": requirements,
             "module_name": strategy.module_name,
+            "base_name": strategy.module_name.removesuffix(".py"),
             "class_name": strategy.class_name,
         }
         EngineeringTeam().set_strategy(strategy).crew().kickoff(inputs=inputs)

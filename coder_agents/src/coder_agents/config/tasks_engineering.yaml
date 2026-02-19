@@ -7,7 +7,7 @@ design_task:
   expected_output: >
     Un diseño detallado para el ingeniero, identificando las clases y funciones en el módulo.
   agent: engineering_lead
-  output_file: generated-apps/{module_name}_design.md
+  output_file: generated-apps/{base_name}_design.md
 
 code_task:
   description: >

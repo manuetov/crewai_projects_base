@@ -99,6 +99,7 @@ class AppBuilderFlow(Flow[AppBuilderState]):
         inputs = {
             "requirements": self.state.requirements,
             "module_name": strategy.module_name,
+            "base_name": strategy.module_name.removesuffix(".py"),
             "class_name": strategy.class_name,
         }
 
