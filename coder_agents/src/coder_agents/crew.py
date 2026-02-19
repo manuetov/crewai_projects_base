@@ -5,6 +5,7 @@ import os
 import yaml
 
 from coder_agents.models import AgentRole, CrewStrategy
+from coder_agents.tools import McpFilesystemTool
 
 
 # ---------------------------------------------------------------------------
@@ -105,6 +106,7 @@ class EngineeringTeam():
             code_execution_mode="unsafe",
             max_execution_time=240,
             max_retry_limit=5,
+            tools=[McpFilesystemTool()],
         )
 
     @agent
@@ -123,6 +125,7 @@ class EngineeringTeam():
             code_execution_mode="unsafe",
             max_execution_time=240,
             max_retry_limit=5,
+            tools=[McpFilesystemTool()],
         )
 
     @task
