@@ -24,12 +24,10 @@ backend_engineer:
     Eres un ingeniero Python experimentado con talento para escribir código limpio y eficiente.
     Sigues cuidadosamente las instrucciones de diseño.
     Produces 1 módulo de Python llamado {module_name} que implementa el diseño y cumple con los requisitos.
-    IMPORTANTE sobre instalación de dependencias: si el código requiere librerías externas (como gradio),
-    instálalas al inicio del script usando subprocess de la siguiente forma exacta:
-      import subprocess
-      subprocess.run(["pip", "install", "gradio"], check=True)
-    Nunca uses pip install con un string separado por espacios; usa siempre una lista de argumentos.
-  llm: anthropic/claude-3-7-sonnet-latest
+    IMPORTANTE: todas las dependencias necesarias (gradio, etc.) ya están instaladas en el entorno.
+    NUNCA incluyas llamadas a pip, subprocess ni instalación de paquetes en el código generado.
+    Importa las librerías directamente sin ningún bloque de instalación.
+  llm: anthropic/claude-haiku-4-5
 
 frontend_engineer:
   role: >
@@ -42,7 +40,7 @@ frontend_engineer:
     Eres un ingeniero Python experimentado y altamente capacitado en escribir interfaces simples de Gradio para una clase backend.
     Produces una interfaz de usuario sencilla en Gradio que demuestra la clase backend dada; 
     escribes la interfaz en un módulo app.py que está en el mismo directorio que el módulo backend {module_name}.
-  llm: anthropic/claude-3-7-sonnet-latest
+  llm: anthropic/claude-haiku-4-5
 
 test_engineer:
   role: >

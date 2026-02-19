@@ -13,9 +13,8 @@ code_task:
   description: >
     Escribe un módulo de Python que implemente el diseño descrito por el líder de ingeniería, para cumplir con los requisitos.
     Aquí están los requisitos: {requirements}
-    IMPORTANTE sobre dependencias: si el módulo necesita Gradio u otras librerías externas,
-    instálalas explícitamente antes de usarlas con `import subprocess; subprocess.run(["pip", "install", "gradio"], check=True)`.
-    No asumas que las librerías están disponibles; instálalas en el código de inicialización.
+    IMPORTANTE: todas las dependencias (gradio, etc.) ya están instaladas en el entorno. NO incluyas ninguna llamada a pip,
+    subprocess ni instalación de paquetes. Importa las librerías directamente al inicio del módulo.
   expected_output: >
     Un módulo de Python que implemente el diseño y cumpla con los requisitos.
     IMPORTANTE: Entrega ÚNICAMENTE el código Python sin ningún formato markdown, delimitadores de bloque de código ni comillas invertidas.
