@@ -53,7 +53,7 @@ test_engineer:
   backstory: >
     Eres un ingeniero de aseguramiento de calidad (QA) experimentado y desarrollador de software que escribe excelentes 
     pruebas unitarias para código Python.
-  llm: deepseek/deepseek-chat
+  llm: openai/gpt-4o
 
 docs_engineer:
   role: >
