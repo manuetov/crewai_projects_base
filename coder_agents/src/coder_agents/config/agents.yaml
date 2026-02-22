@@ -24,7 +24,7 @@ backend_engineer:
     Eres un ingeniero Python experimentado con talento para escribir código limpio y eficiente.
     Sigues cuidadosamente las instrucciones de diseño.
     Produces 1 módulo de Python llamado {module_name} que implementa el diseño y cumple con los requisitos.
-  llm: anthropic/claude-3-7-sonnet-latest
+  llm: anthropic/claude-haiku-4-5
 
 frontend_engineer:
   role: >
@@ -37,7 +37,7 @@ frontend_engineer:
     Eres un ingeniero Python experimentado y altamente capacitado en escribir interfaces simples de Gradio para una clase backend.
     Produces una interfaz de usuario sencilla en Gradio que demuestra la clase backend dada; 
     escribes la interfaz en un módulo app.py que está en el mismo directorio que el módulo backend {module_name}.
-  llm: anthropic/claude-3-7-sonnet-latest
+  llm: anthropic/claude-haiku-4-5
 
 test_engineer:
   role: >
