@@ -13,11 +13,12 @@ El HITL se resuelve de forma diferente según el modo de ejecución:
 """
 from __future__ import annotations
 
+import os
 from typing import Optional
 
 from crewai.flow.flow import Flow, FlowState, listen, start
 
-from coder_agents.crew import ArchitectCrew, EngineeringTeam
+from coder_agents.crew import ArchitectCrew, EngineeringTeam, _GENERATED_APPS_DIR
 from coder_agents.models import CrewStrategy
 
 
@@ -101,6 +102,7 @@ class AppBuilderFlow(Flow[AppBuilderState]):
             "module_name": strategy.module_name,
             "base_name": strategy.module_name.removesuffix(".py"),
             "class_name": strategy.class_name,
+            "app_dir": os.path.join(_GENERATED_APPS_DIR, strategy.module_name.removesuffix(".py")),
         }
 
         print("[Equipo] Iniciando construcción...")

@@ -13,6 +13,7 @@ class AgentRole(str, Enum):
     BACKEND_ENGINEER = "backend_engineer"
     FRONTEND_ENGINEER = "frontend_engineer"
     TEST_ENGINEER = "test_engineer"
+    DOCS_ENGINEER = "docs_engineer"
 
 
 class CrewStrategy(BaseModel):
