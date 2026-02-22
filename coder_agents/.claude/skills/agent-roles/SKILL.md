@@ -17,9 +17,9 @@ description: Referencia rápida de los agentes de CoderAgents. Usar al preguntar
 | Agente | Responsabilidad | LLM |
 |--------|-----------------|-----|
 | **engineering_lead** | Diseño detallado del módulo (clases, métodos) → `*_design.md` | gpt-4o |
-| **backend_engineer** | Código Python del módulo → `{module_name}` | claude-3-7-sonnet |
-| **frontend_engineer** | UI Gradio en `app.py` que demuestra el backend | claude-3-7-sonnet |
-| **test_engineer** | Pruebas unitarias → `test_{module_name}` | deepseek / gpt-4o |
+| **backend_engineer** | Código Python del módulo → `{module_name}` | gpt-4o |
+| **frontend_engineer** | UI Gradio en `app.py` que demuestra el backend | gpt-4o |
+| **test_engineer** | Pruebas unitarias + ejecuta pytest para validar → `test_{module_name}` | gpt-4o |
 | **docs_engineer** | `INSTRUCTIONS.md` para desarrolladores/IA | gpt-4o |
 
 ## Orden de ejecución
@@ -30,10 +30,11 @@ description: Referencia rápida de los agentes de CoderAgents. Usar al preguntar
 4. test_task (test_engineer) — usa contexto de code_task
 5. docs_task (docs_engineer) — al final, revisa todos los artefactos
 
-## Herramientas especiales
+## Herramientas y ejecución de código
 
-- `backend_engineer` y `test_engineer` tienen `allow_code_execution=True` y `McpFilesystemTool()` para escribir archivos.
-- `docs_engineer` usa `McpFilesystemTool()` para leer/generar INSTRUCTIONS.md.
+- `backend_engineer` y `test_engineer` tienen `allow_code_execution=True` (CrewAI escribe la salida vía `output_file` en las tareas; no usa McpFilesystemTool en la versión actual).
+- `test_engineer` ejecuta pytest para validar el código generado (PARTE 2 de test_task).
+- `docs_engineer` no tiene herramientas; la salida va a `output_file`.
 
 ## Propiedades clave de Agent (CrewAI)
 
@@ -41,10 +42,10 @@ Cada agente puede configurarse con: `role`, `goal`, `backstory`, `llm`, `verbose
 
 ## Ejecución de tests generados
 
-Los tests van en `generated-apps/test_{module_name}`. Para ejecutarlos:
+Los tests van en `generated-apps/{base_name}/test_{module_name}` (subcarpeta por app). Para ejecutarlos:
 ```bash
-cd generated-apps
+cd generated-apps/{base_name}
 pytest test_{module_name} -v
-# o todos
+# o todos en esa app
 pytest -v
 ```

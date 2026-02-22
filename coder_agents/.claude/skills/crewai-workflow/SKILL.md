@@ -29,12 +29,14 @@ En modo Gradio (`app_gradio.py`), el HITL se omite: se llama `run_architect` y `
 
 ## Salida
 
-Los artefactos se generan en `generated-apps/`:
-- `{module_name}_design.md` (diseño)
+Los artefactos se generan en `generated-apps/{base_name}/` (subcarpeta por app):
+- `{base_name}_design.md` (diseño)
 - `{module_name}` (código Python)
 - `app.py` (Gradio, si hubo frontend_engineer)
 - `test_{module_name}` (tests)
 - `INSTRUCTIONS.md` (docs)
+
+El directorio `{app_dir}` se inyecta en los `inputs` del `kickoff` como `generated-apps/{base_name}`.
 
 ## Conceptos CrewAI (referencia)
 

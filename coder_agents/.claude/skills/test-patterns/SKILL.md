@@ -7,7 +7,7 @@ description: Patrones pytest para tests generados por test_engineer. Usar al esc
 
 ## Ubicación
 
-Los tests van en `generated-apps/test_{module_name}` (ej. `test_accounts.py`). Mismo directorio que el módulo backend.
+Los tests van en `generated-apps/{base_name}/test_{module_name}` (ej. `test_accounts.py`). Mismo directorio que el módulo backend. Cada app tiene su subcarpeta dentro de `generated-apps/`.
 
 ## Estructura de test (pytest)
 
@@ -66,9 +66,9 @@ def test_withdraw_sin_fondos_raises():
 ## Ejecutar tests
 
 ```bash
-cd generated-apps
+cd generated-apps/{base_name}   # ej. generated-apps/accounts
 pytest test_{module_name} -v
-pytest -v                    # todos
+pytest -v                    # todos en esa app
 pytest -x                    # parar en primer fallo
 pytest --lf                  # solo los que fallaron antes
 pytest --cov=. --cov-report=term-missing   # con coverage

@@ -8,7 +8,7 @@ description: Convenciones de Gradio en CoderAgents. Usar al crear, modificar o r
 ## Estructura esperada
 
 - **Archivo**: `app.py` en el mismo directorio que el módulo backend
-- **Ubicación**: `generated-apps/app.py` (junto a `{module_name}`)
+- **Ubicación**: `generated-apps/{base_name}/app.py` (subcarpeta por app)
 - **Import**: `from {base_name} import {class_name}` (ej. `from accounts import Account`)
 
 ## Reglas del frontend_engineer
@@ -16,12 +16,7 @@ description: Convenciones de Gradio en CoderAgents. Usar al crear, modificar o r
 1. Una sola interfaz para demostrar la clase backend
 2. Un solo usuario, prototipo/demo sencillo
 3. Código autónomo: ejecutable tal cual, sin pasos extra
-4. Si necesita `gradio`, el backend_engineer puede instalar vía:
-   ```python
-   import subprocess
-   subprocess.run(["pip", "install", "gradio"], check=True)
-   ```
-   Usar siempre lista de argumentos, nunca string con espacios
+4. Las dependencias (gradio, openai, etc.) ya están instaladas en el venv. El código generado debe importar directamente; NUNCA incluir pip, subprocess ni instalación de paquetes.
 
 ## Output del agente
 

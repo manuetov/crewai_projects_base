@@ -27,7 +27,7 @@ python -m coder_agents.main   # Alternativa
 | `ModuleNotFoundError: coder_agents` | Ejecutar desde la raíz donde está `pyproject.toml`; o `uv run python -m coder_agents.main` |
 | `KeyError` en agents/tasks | Verificar que el nombre en YAML coincida con el usado en `crew.py` (agents_config, tasks_config) |
 | `CrewStrategy` validation error | El architect devolvió JSON inválido; revisar que `agents_needed` use valores del enum (`AgentRole`) |
-| MCP / McpFilesystemTool error | Comprobar que el servidor MCP de filesystem esté disponible si se usa |
+| MCP / McpFilesystemTool error | En la versión actual la escritura es vía `output_file` (no McpFilesystemTool). Si se restaura el tool, comprobar que el servidor MCP de filesystem esté disponible. |
 
 ## Estructura esperada
 
@@ -51,7 +51,7 @@ coder_agents/
 ## Si la app generada falla
 
 - Revisar `generated-apps/INSTRUCTIONS.md` para instrucciones de instalación y ejecución.
-- Las apps Gradio pueden requerir `pip install gradio`; el backend_engineer tiene instrucciones para instalarlo vía subprocess si es necesario.
+- Las dependencias (gradio, openai, etc.) ya están en el venv de coder_agents; el backend_engineer no debe incluir pip/subprocess en el código generado.
 
 ## Comandos CLI CrewAI
 

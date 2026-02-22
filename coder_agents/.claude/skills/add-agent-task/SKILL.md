@@ -30,7 +30,7 @@ description: Cómo añadir un nuevo agente o tarea al crew CoderAgents. Usar cua
      expected_output: ...
      agent: nuevo_rol
      context: [code_task]  # si depende de otra tarea
-     output_file: generated-apps/...
+     output_file: "{app_dir}/..."
    ```
 
 4. **`crew.py`** — Actualizar los maps y métodos:

@@ -32,10 +32,10 @@ nombre_task:
   expected_output: >
   agent: nombre_agente
   context: [otro_task]   # Dependencia de contexto
-  output_file: generated-apps/{module_name}   # Ruta relativa
+  output_file: "{app_dir}/{module_name}"   # app_dir inyectado en inputs
 ```
 
-`output_file` puede usar `{module_name}`, `{base_name}`. El formato `test_{module_name}` genera `test_accounts.py` cuando `module_name=accounts.py`.
+`output_file` puede usar `{app_dir}`, `{module_name}`, `{base_name}`. `{app_dir}` es la subcarpeta por app (ej. `generated-apps/accounts`). El formato `test_{module_name}` genera `test_accounts.py` cuando `module_name=accounts.py`.
 
 ## inputs del kickoff
 
@@ -45,8 +45,11 @@ inputs = {
     "module_name": "accounts.py",
     "base_name": "accounts",   # module_name sin .py
     "class_name": "Account",
+    "app_dir": "generated-apps/accounts",   # subcarpeta por app (obligatorio para output_file)
 }
 ```
+
+`app_dir` se calcula como `generated-apps/{base_name}`. El flow y app_gradio lo inyectan en cada `kickoff`.
 
 ## Mapeo en crew.py
 
