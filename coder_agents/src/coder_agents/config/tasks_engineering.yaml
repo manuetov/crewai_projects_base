@@ -7,23 +7,25 @@ design_task:
   expected_output: >
     Un diseño detallado para el ingeniero, identificando las clases y funciones en el módulo.
   agent: engineering_lead
-  output_file: generated-apps/{base_name}_design.md
+  output_file: "{app_dir}/{base_name}_design.md"
 
 code_task:
   description: >
     Escribe un módulo de Python que implemente el diseño descrito por el líder de ingeniería, para cumplir con los requisitos.
     Aquí están los requisitos: {requirements}
-    IMPORTANTE sobre dependencias: si el módulo necesita Gradio u otras librerías externas,
-    instálalas explícitamente antes de usarlas con `import subprocess; subprocess.run(["pip", "install", "gradio"], check=True)`.
-    No asumas que las librerías están disponibles; instálalas en el código de inicialización.
+    IMPORTANTE: todas las dependencias (gradio, openai, etc.) ya están instaladas en el entorno. NO incluyas ninguna llamada a pip,
+    subprocess ni instalación de paquetes. Importa las librerías directamente al inicio del módulo.
+    Si usas openai, usa la API moderna: client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY')) y client.chat.completions.create(...).
+    NUNCA uses openai.ChatCompletion.create() ni openai.api_key = ... ya que están deprecadas y producen errores.
   expected_output: >
-    Un módulo de Python que implemente el diseño y cumpla con los requisitos.
+    Un módulo de Python COMPLETO que implemente el diseño y cumpla con los requisitos.
+    CRÍTICO: Todos los métodos y funciones deben estar completamente implementados, sin truncar ni dejar incompletos.
     IMPORTANTE: Entrega ÚNICAMENTE el código Python sin ningún formato markdown, delimitadores de bloque de código ni comillas invertidas.
-    La salida debe ser código Python válido que pueda guardarse directamente en un archivo y ejecutarse.
+    La salida debe ser código Python válido y sintácticamente correcto que pueda guardarse directamente en un archivo y ejecutarse sin errores.
   agent: backend_engineer
   context:
     - design_task
-  output_file: generated-apps/{module_name}
+  output_file: "{app_dir}/{module_name}"
 
 frontend_task:
   description: >
@@ -38,20 +40,35 @@ frontend_task:
   agent: frontend_engineer
   context:
     - code_task
-  output_file: generated-apps/app.py
+  output_file: "{app_dir}/app.py"
 
 test_task:
   description: >
-    Escribe pruebas unitarias para el módulo backend proporcionado {module_name} y crea un archivo test_{module_name} 
-    en el mismo directorio que el módulo backend.
+    Directorio de trabajo: {app_dir}
+    Módulo a probar: {module_name}
+    
+    Tu tarea tiene DOS partes:
+    
+    PARTE 1 — Escribe el archivo de tests:
+    Crea pruebas unitarias completas para {module_name}. Usa unittest.mock para evitar
+    dependencias externas (HTTP, APIs, bases de datos). Guárdalas en {app_dir}/test_{module_name}.
+    
+    PARTE 2 — Valida el código ejecutando:
+    1. Cambia al directorio {app_dir}: import os; os.chdir(r"{app_dir}")
+    2. Verifica la sintaxis del backend: import py_compile; py_compile.compile("{module_name}", doraise=True)
+    3. Ejecuta los tests: import subprocess; result = subprocess.run(["python", "-m", "pytest", "test_{module_name}", "-v", "--tb=short"], capture_output=True, text=True, cwd=r"{app_dir}"); print(result.stdout); print(result.stderr)
+    4. Si pytest no está disponible usa unittest: subprocess.run(["python", "-m", "unittest", "test_{module_name}"], ...)
+    
+    Reporta en tu respuesta final: cuántos tests pasaron, cuántos fallaron, y los errores encontrados.
   expected_output: >
-    Un módulo test_{module_name} que prueba el módulo backend dado.
-    IMPORTANTE: Entrega ÚNICAMENTE el código Python sin ningún formato markdown, delimitadores de bloque de código ni comillas invertidas.
-    La salida debe ser código Python válido que pueda guardarse directamente en un archivo y ejecutarse.
+    El archivo test_{module_name} con las pruebas unitarias completas.
+    Un reporte de ejecución indicando: tests pasados, tests fallidos, y errores encontrados.
+    Si hay errores en el backend o en los tests, descríbelos con detalle para que puedan corregirse.
+    IMPORTANTE: Entrega ÚNICAMENTE el código Python de los tests sin markdown ni delimitadores.
   agent: test_engineer
   context:
     - code_task
-  output_file: generated-apps/test_{module_name}
+  output_file: "{app_dir}/test_{module_name}"
 
 docs_task:
   description: >
@@ -63,7 +80,8 @@ docs_task:
     1. **Propósito** — qué hace el proyecto y cuál es su clase principal ({class_name}).
     2. **Stack tecnológico** — Python, librerías, Gradio si existe frontend.
     3. **Estructura de archivos** — lista los archivos en generated-apps/ y describe el rol de cada uno.
-    4. **Instalación** — cómo instalar dependencias (`pip install -r requirements.txt` o similar).
+    4. **Instalación** — las dependencias ya están en el entorno virtual del proyecto CrewAI (coder_agents/.venv).
+       Activa el entorno antes de ejecutar: desde la carpeta `coder_agents/` ejecuta `.\.venv\Scripts\Activate.ps1` (Windows) o `source .venv/bin/activate` (Linux/Mac).
     5. **Ejecución** — cómo ejecutar el módulo y el frontend si existe.
     6. **Tests** — cómo correr los tests (`python -m pytest test_{module_name}` o similar).
     7. **Convenciones** — nomenclatura, estilo de código.
@@ -76,4 +94,4 @@ docs_task:
   agent: docs_engineer
   context:
     - code_task
-  output_file: generated-apps/INSTRUCTIONS.md
+  output_file: "{app_dir}/INSTRUCTIONS.md"

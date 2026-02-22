@@ -1,11 +1,16 @@
-from crewai import Agent, Crew, Process, Task
-from crewai.project import CrewBase, agent, crew, task
-from typing import Optional
 import os
+from typing import Optional
 import yaml
 
+from crewai import Agent, Crew, Process, Task
+from crewai.project import CrewBase, agent, crew, task
 from coder_agents.models import AgentRole, CrewStrategy
-from coder_agents.tools import McpFilesystemTool
+
+# Base directory for all generated apps
+# crew.py lives at src/coder_agents/ → 2 levels up reaches coder_agents/
+_GENERATED_APPS_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "generated-apps")
+)
 
 
 # ---------------------------------------------------------------------------
@@ -72,8 +77,22 @@ class ArchitectCrew:
 
         if result.pydantic:
             return result.pydantic
+
         # Fallback: parse raw JSON string
-        return CrewStrategy.model_validate_json(result.raw)
+        import json, re
+        raw = result.raw or ""
+        # Extract first JSON block if wrapped in markdown code fences
+        match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, re.DOTALL)
+        if match:
+            raw = match.group(1)
+        data = json.loads(raw)
+        # LLM sometimes returns the JSON Schema wrapper instead of the actual data.
+        # If the dict has a "properties" key with the real fields, unwrap it.
+        if "properties" in data and isinstance(data["properties"], dict):
+            props = data["properties"]
+            if "module_name" in props:
+                data = props
+        return CrewStrategy.model_validate(data)
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +111,18 @@ class EngineeringTeam():
         object.__setattr__(self, "_strategy", strategy)
         return self
 
+    def _app_dir(self) -> str:
+        """Returns a per-app subdirectory inside generated-apps/ based on module_name."""
+        strategy: Optional[CrewStrategy] = getattr(self, "_strategy", None)
+        if strategy:
+            # e.g. "task_distribution.py" → "task_distribution"
+            subfolder = os.path.splitext(strategy.module_name)[0]
+        else:
+            subfolder = "default"
+        path = os.path.join(_GENERATED_APPS_DIR, subfolder)
+        os.makedirs(path, exist_ok=True)
+        return path
+
     @agent
     def engineering_lead(self) -> Agent:
         return Agent(
@@ -108,7 +139,6 @@ class EngineeringTeam():
             code_execution_mode="unsafe",
             max_execution_time=600,
             max_retry_limit=5,
-            tools=[McpFilesystemTool()],
         )
 
     @agent
@@ -125,9 +155,12 @@ class EngineeringTeam():
             verbose=True,
             allow_code_execution=True,
             code_execution_mode="unsafe",
+<<<<<<< HEAD
             max_execution_time=600,
+=======
+            max_execution_time=300,
+>>>>>>> b2f5540087dfabc1f472082bdcad1f3286b2c0ff
             max_retry_limit=5,
-            tools=[McpFilesystemTool()],
         )
 
     @agent
@@ -135,7 +168,6 @@ class EngineeringTeam():
         return Agent(
             config=self.agents_config['docs_engineer'],
             verbose=True,
-            tools=[McpFilesystemTool()],
         )
 
     @task
