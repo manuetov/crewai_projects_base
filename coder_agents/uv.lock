@@ -635,6 +635,7 @@ source = { editable = "." }
 dependencies = [
     { name = "apscheduler" },
     { name = "crewai", extra = ["anthropic", "tools"] },
+    { name = "crewai-tools" },
     { name = "fastapi" },
     { name = "gradio" },
     { name = "litellm" },
@@ -644,6 +645,7 @@ dependencies = [
 requires-dist = [
     { name = "apscheduler", specifier = ">=3.10.0" },
     { name = "crewai", extras = ["anthropic", "tools"], specifier = "==1.9.3" },
+    { name = "crewai-tools", specifier = ">=1.9.3" },
     { name = "fastapi", specifier = ">=0.129.0" },
     { name = "gradio", specifier = ">=6.5.1" },
     { name = "litellm", specifier = ">=1.75.3" },

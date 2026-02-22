@@ -35,6 +35,17 @@ GENERATED_APPS_DIR = os.path.join(_PROJECT_ROOT, "generated-apps")
 # Schemas
 # ---------------------------------------------------------------------------
 
+class McpArguments(BaseModel):
+    """
+    Argumentos para las operaciones MCP filesystem.
+    path es obligatorio en todas; content solo para write_file.
+    extra='forbid' genera additionalProperties: false requerido por la API OpenAI.
+    """
+    model_config = {"extra": "forbid"}
+    path: str = Field(..., description="Ruta relativa al archivo o directorio (dentro de generated-apps/).")
+    content: str | None = Field(default=None, description="Contenido del archivo. Obligatorio para write_file.")
+
+
 class McpFilesystemInput(BaseModel):
     """Input schema para McpFilesystemTool."""
 
@@ -45,14 +56,12 @@ class McpFilesystemInput(BaseModel):
             "Valores válidos: 'read_file', 'write_file', 'list_directory', 'create_directory'."
         ),
     )
-    arguments: dict[str, Any] = Field(
-        default_factory=dict,
+    arguments: McpArguments | None = Field(
+        default=None,
         description=(
-            "Argumentos para la herramienta MCP como diccionario. Ejemplos: "
-            "read_file → {'path': 'temperature_converter.py'}; "
-            "write_file → {'path': 'result.txt', 'content': 'hola'}; "
-            "list_directory → {'path': '.'}; "
-            "create_directory → {'path': 'subdir'}."
+            "Argumentos para la herramienta MCP (path obligatorio; content para write_file). "
+            "read_file/list_directory/create_directory → {'path': '...'}. "
+            "write_file → {'path': '...', 'content': '...'}."
         ),
     )
 
@@ -76,13 +85,17 @@ class McpFilesystemTool(BaseTool):
     )
     args_schema: Type[BaseModel] = McpFilesystemInput
 
-    def _run(self, tool_name: str, arguments: dict[str, Any] | None = None) -> str:
+    def _run(self, tool_name: str, arguments: McpArguments | dict[str, Any] | None = None) -> str:
         """Entry point síncrono — lanza el cliente MCP async en un loop nuevo."""
         if arguments is None:
-            arguments = {}
+            args_dict: dict[str, Any] = {}
+        elif isinstance(arguments, McpArguments):
+            args_dict = arguments.model_dump(exclude_none=True)
+        else:
+            args_dict = dict(arguments)
         os.makedirs(GENERATED_APPS_DIR, exist_ok=True)
         try:
-            return asyncio.run(self._call_mcp(tool_name, arguments))
+            return asyncio.run(self._call_mcp(tool_name, args_dict))
         except ValueError as exc:
             return f"❌ Acceso denegado: {exc}"
         except Exception as exc:
