@@ -17,7 +17,8 @@
 9. [Error Deepseek + LiteLLM](#error-deepseek--litellm-400-bad-request)
 10. [Error schema mcp_filesystem](#error-schema-mcp_filesystem-additionalproperties-required)
 11. [Error 404 modelo Claude](#error-404-modelo-claude-claude-3-7-sonnet-latest)
-12. [Glosario](#glosario)
+12. [Cambios recientes (feat/using-claude)](#cambios-recientes-featusing-claude)
+13. [Glosario](#glosario)
 
 ---
 
@@ -34,7 +35,8 @@
 | 8 | INSTRUCTIONS.md (docs_engineer) | ✅ Completado |
 | 7 | QA con Docker | Pendiente |
 | — | Correcciones test (77e1e42) | ✅ Aplicadas (timeout, arguments opcional, pip gradio) |
-| — | Error Deepseek (b8d3be4: quitar allow_code_execution de test_engineer) | ✅ Corregido |
+| — | Error Deepseek (b8d3be4: quitar allow_code_execution de test_engineer) | ⚠️ Supersedido por ba617f8 (ver nota) |
+| — | Restaurar allow_code_execution en test_engineer (ba617f8, para Claude) | ✅ Aplicado |
 | — | Error schema mcp_filesystem (additionalProperties) | ✅ Corregido |
 | — | Error 404 modelo Claude (→ claude-haiku-4-5) | ✅ Corregido |
 
@@ -364,6 +366,10 @@ Todas las rutas son relativas a `generated-apps/`.
 | frontend_engineer | No |
 | test_engineer | Sí |
 
+### Estado actual (post-merge feat/using-claude)
+
+**Nota:** En la versión actual de `crew.py` (tras merge con `develop`), los agentes **no reciben** `McpFilesystemTool`. La escritura de archivos se hace mediante `output_file` en las tareas (`tasks_engineering.yaml`), usando la variable `{app_dir}` inyectada en los `inputs` del `kickoff`. El archivo `tools/mcp_tool.py` sigue existiendo por si se quiere reintroducir la herramienta para operaciones adicionales (lectura de contexto, listado de archivos). Si se detectan fallos al generar apps, valorar restaurar `tools=[McpFilesystemTool()]` en `backend_engineer`, `test_engineer` y `docs_engineer` según la documentación de Prioridad 5.
+
 ---
 
 ### Conceptos para aprender
@@ -504,6 +510,20 @@ Esto ocurre aunque el YAML del agente use `openai/gpt-4o`: el subcomponente de c
 
 *Última actualización:* Causa raíz documentada — CodeInterpreterTool + DeepSeek /beta/. Fix b8d3be4: quitar allow_code_execution de test_engineer.
 
+### Restauración con Claude (commit ba617f8)
+
+**Contexto:** El fix b8d3be4 quitaba `allow_code_execution` de `test_engineer` porque DeepSeek rechazaba el CodeInterpreterTool. En la rama `feat/using-claude`, al usar Claude como LLM, ese error no ocurre.
+
+| Archivo | Cambio |
+|---------|--------|
+| `crew.py` | Se **restauran** en `test_engineer`: `allow_code_execution=True`, `code_execution_mode="unsafe"`, `max_execution_time=600`. |
+
+**Motivo:** La tarea `test_task` en `tasks_engineering.yaml` incluye una **PARTE 2** que valida el código ejecutando: verificación de sintaxis con `py_compile`, ejecución de `pytest` o `unittest`, y reporte de resultados. Para hacerlo, el agente necesita `allow_code_execution=True`.
+
+**Cuándo aplicar cada fix:**
+- **DeepSeek como LLM:** Mantener b8d3be4 (sin `allow_code_execution` en `test_engineer`). El agente solo escribe tests, no los ejecuta.
+- **Claude como LLM:** Usar ba617f8. El agente puede ejecutar los tests y reportar fallos.
+
 ---
 
 ## Error schema mcp_filesystem (additionalProperties required)
@@ -553,3 +573,11 @@ Error code: 404 - not_found_error - model: claude-3-7-sonnet-latest
 | `agents.yaml` | Igual |
 
 **Modelo actual:** `anthropic/claude-haiku-4-5` — más barato ($1 input / $5 output MTok vs Sonnet $3/$15). Alternativas: `claude-sonnet-4-5` (equilibrio coste/calidad), `claude-sonnet-4-6` (más capaz).
+
+---
+
+## Cambios recientes (feat/using-claude)
+
+### Merge develop → feat/using-claude (b2f5540)
+
+El merge con `origin/develop` introdujo cambios en `crew.py`. Resolución recomendada para conflictos en `max_execution_time` de `test_engineer`: mantener **600 s** (alineado con 77e1e42 y con la PARTE 2 de `test_task`, que ejecuta pytest).

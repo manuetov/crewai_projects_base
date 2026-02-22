@@ -155,11 +155,7 @@ class EngineeringTeam():
             verbose=True,
             allow_code_execution=True,
             code_execution_mode="unsafe",
-<<<<<<< HEAD
             max_execution_time=600,
-=======
-            max_execution_time=300,
->>>>>>> b2f5540087dfabc1f472082bdcad1f3286b2c0ff
             max_retry_limit=5,
         )
 
